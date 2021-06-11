@@ -1,26 +1,27 @@
-let data = [{
-    id: 1,
-    name: "Pizzaria Guloso",
-     'daily-hours': 2,
-      'total-hours': 1,
-        create_at: Date.now(),     //atribuido data de criacao (hoje)
-       
-    },
-{
-    id: 2,
-    name: "OneTwo Project",
-     'daily-hours': 3,
-      'total-hours': 43,
-        create_at: Date.now(),    //atribuido data de criacao (hoje)
-       
-    }
-];
+const Database = require('../db/config')
 
 module.exports = {
 
-    get(){
+    async get(){
 
-        return data;
+        const db = await Database()
+
+
+        const jobs = await db.all(`SELECT * FROM jobs`)
+
+
+        await db.close()
+
+        return jobs.map(job =>({
+            
+                id: job.id,
+                name:job.name,
+                'daily-hours': job.daily_hours,
+                'total-hours': job.total_hours,
+                create_at: job.create_at 
+
+            
+        }));
 
     },
 
@@ -34,10 +35,22 @@ module.exports = {
         data =  data.filter(job => Number(job.id) !== Number(id))
 
     },
-    create(newJob){
+    async create(newJob){
 
-        data.push(newJob)
+        const db = await Database()
 
+
+        await db.run(`INSERT INTO jobs(
+            name,
+            daily_hours,
+            total_hours,
+            create_at
+        ) VALUES(
+            "${newJob.name}",
+            ${newJob["daily-hours"]},
+            ${newJob["total-hours"]},
+            ${newJob.create_at}
+        )`)
     }
 
 }

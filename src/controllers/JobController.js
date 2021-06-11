@@ -6,17 +6,14 @@ module.exports = {
     create(req,res){
        return res.render( "job"); 
     },
-    save(req, res){
+    async save(req, res){
     
 
         //[ { name: 'tomate', 'daily-hours': '5', 'total-hours': '3' } ] //req.body
-        const jobs = Job.get();
+        const jobs = await Job.get();
     
-        const lastId = jobs.length ? jobs[jobs.length - 1].id : 0;
-        console.log(lastId);
-
-        Job.create({
-            id: lastId + 1,
+        await Job.create({
+            
             name: req.body.name,
             'daily-hours': req.body["daily-hours"],
             'total-hours': req.body["total-hours"],
@@ -28,8 +25,8 @@ module.exports = {
         return res.redirect("/");
 
     },
-    show(req,res){
-        const jobs = Job.get();
+    async show(req,res){
+        const jobs = await Job.get();
         const jobId = req.params.id;
 
         let job = jobs.find(job => Number(job.id) === Number(jobId))
@@ -40,15 +37,15 @@ module.exports = {
 
         }
 
-        const profile = Profile.get();
+        const profile = await Profile.get();
         job.budget = JobUtils.calculateBudget(job, profile["value-hour"])
 
 
         return res.render("job-edit", {job})
     },
 
-    update(req,res){
-        const jobs = Job.get();
+    async update(req,res){
+        const jobs = await Job.get();
         const jobId = req.params.id
 
         const job =     jobs.find(job => Number(job.id) === Number(jobId))

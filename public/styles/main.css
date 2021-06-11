@@ -111,3 +111,9 @@ a {
 .flex {
   display: flex;
 }
+
+.input-wrapper {
+
+    width: 50%;
+
+}
